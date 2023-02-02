@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+import { Ref } from "vue";
 interface Props {
   title: string;
   placeholder: string;
   modelValue?: string;
   type?: "text" | "password";
-  errorMessage?: any;
+  errorMessage?: Ref<string> | string;
 }
 const props = defineProps<Props>();
 const emits = defineEmits(["update:modelValue"]);

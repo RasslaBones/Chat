@@ -96,13 +96,14 @@ const mainStore = createStore({
       if (payload.message && payload.username && payload.color) {
         const { userId } = payload;
         try {
-          const res = await axios.get(process.env.VUE_APP_GET_USER + userId);
           await axios.post(process.env.VUE_APP_CREATE_MESSAGE, payload);
-          const updateVals = {
+          if(store.state.currentUser.messagesSent){
+            const updateVals = {
             userId: userId,
-            messagesSent: res.data.messagesSent + 1,
+            messagesSent: store.state.currentUser.messagesSent + 1,
           };
           await axios.put(process.env.VUE_APP_UPDATE_USER + userId, updateVals);
+          }
           store.commit("ADD_MESSAGE", payload);
         } catch (err) {
           console.warn("addMessage : ", err);
@@ -117,6 +118,29 @@ const mainStore = createStore({
           console.log("LOGIN SUCCESS!!", res.data);
         } catch (err) {
           console.warn("login : ", err);
+        }
+      }
+    },
+    async register(store, payload){
+      if(payload.username && payload.email && payload.password){
+        try{
+          await axios.post(process.env.VUE_APP_REGISTER_API, payload)
+          store.dispatch("logIn", payload)
+        } catch(err){
+          console.warn("register : ", err)
+        }
+      }
+    },
+    async checkUsername(store, payload){
+      if(payload.username){
+        try{
+          const res = await axios.post(process.env.VUE_APP_CHECK_USER + payload.username)
+          if(res.data){
+            await store.dispatch('register',payload)
+          }
+          else return "Username is not unique"
+        } catch(err){
+          console.warn("checkUsername : ", err)
         }
       }
     },

@@ -1,8 +1,15 @@
 <script lang="ts" setup>
 import ProfileInput from "@/components/Profile/ProfileInput.vue";
 import ProfileButton from "@/components/Profile/ProfileButton.vue";
+import { useStore } from "vuex";
 import { ref } from "vue";
+
 const disabled = ref(false);
+const store = useStore();
+
+const logOut = () => {
+  store.state.currentUser.username = undefined;
+};
 </script>
 <template>
   <div
@@ -46,11 +53,12 @@ const disabled = ref(false);
         <ProfileInput :disabled="disabled" title="Bio" />
         <ProfileInput :disabled="disabled" title="Password" />
       </div>
-      <div class="w-full flex justify-end">
+      <div class="w-full flex justify-between">
         <ProfileButton
           @btnClick="disabled = !disabled"
           :title="disabled ? 'Update Settings' : 'Confirm'"
         />
+        <ProfileButton @btnClick="logOut" :title="'Log Out'" />
       </div>
     </div>
   </div>

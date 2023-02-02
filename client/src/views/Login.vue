@@ -25,8 +25,8 @@ const store = useStore();
 const logIn = () => {
   v$.value.$validate();
   if (!v$.value.$error) {
-    router.push({ path: "/" });
     store.dispatch("logIn", userData);
+    router.push({ path: "/" });
   }
 };
 </script>
@@ -39,13 +39,13 @@ const logIn = () => {
       <LogInInput
         title="Username"
         placeholder="username..."
-        :errorMessage="v$.username.$error && v$.username.$errors[0].$message"
+        :errorMessage="v$.username.$errors[0]?.$message ?? ''"
         v-model="userData.username"
       />
       <LogInInput
         title="Password"
         placeholder="password..."
-        :errorMessage="v$.password.$error && v$.password.$errors[0].$message"
+        :errorMessage="v$.password.$errors[0]?.$message ?? ''"
         v-model="userData.password"
         type="password"
       />
