@@ -45,8 +45,7 @@ const getColor = (color: string) => {
 };
 
 const getUser = computed(() => {
-  console.log(store.state.currentUser.value);
-  if (store.state.currentUser.value) return "Profile";
+  if (store.state.currentUser.userId) return "Profile";
   return "Login";
 });
 </script>

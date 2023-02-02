@@ -1,8 +1,17 @@
 <script lang="ts" setup>
 import ProfileInput from "@/components/Profile/ProfileInput.vue";
 import ProfileButton from "@/components/Profile/ProfileButton.vue";
-import { ref } from "vue";
-const disabled = ref(false);
+import { ref, reactive } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
+const user = store.state.currentUser;
+
+const profileVals = reactive({
+  username: user.username,
+  email: user.email,
+  password: user.password,
+});
+const disabled = ref(true);
 </script>
 <template>
   <div
@@ -19,11 +28,15 @@ const disabled = ref(false);
           <ProfileButton @btnClick="" title="Change Image" />
         </div>
         <div class="flex flex-col gap-4 flex-1">
-          <h1 class="text-gray-100 text-3xl">user's Profile Settings</h1>
+          <h1 class="text-gray-100 text-3xl">
+            {{ user.username }}'s Profile Settings
+          </h1>
           <h3 class="text-gray-300 text-base">
-            user's account was created 158 days ago.
+            {{ user.username }}'s account was created 158 days ago.
           </h3>
-          <h3 class="text-gray-300 text-base">user sent 158 messages.</h3>
+          <h3 class="text-gray-300 text-base">
+            {{ user.username }} sent {{ user.messagesSent }} messages.
+          </h3>
         </div>
         <router-link to="/" class="h-max fill-gray-400 hover:fill-gray-500">
           <svg
@@ -39,14 +52,29 @@ const disabled = ref(false);
         </router-link>
       </div>
       <hr class="my-8" />
-      <h1 class="text-2xl text-gray-100">user's Private Information</h1>
+      <h1 class="text-2xl text-gray-100">
+        {{ user.username }}'s Private Information
+      </h1>
       <div class="flex flex-col gap-4 mt-4">
-        <ProfileInput :disabled="disabled" title="Username" />
-        <ProfileInput :disabled="disabled" title="Email" />
+        <ProfileInput
+          :disabled="disabled"
+          title="Username"
+          v-model="profileVals.username"
+        />
+        <ProfileInput
+          :disabled="disabled"
+          title="Email"
+          v-model="profileVals.email"
+        />
         <ProfileInput :disabled="disabled" title="Bio" />
-        <ProfileInput :disabled="disabled" title="Password" />
+        <ProfileInput
+          :disabled="disabled"
+          title="Password"
+          v-model="profileVals.password"
+        />
       </div>
-      <div class="w-full flex justify-end">
+      <div class="w-full flex justify-between">
+        <ProfileButton @btnClick="" title="Log Out" />
         <ProfileButton
           @btnClick="disabled = !disabled"
           :title="disabled ? 'Update Settings' : 'Confirm'"

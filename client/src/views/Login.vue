@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import LogInInput from "@/components/Login/LogInInput.vue";
 import LogInButton from "@/components/Login/LogInButton.vue";
+import LogInCheckbox from "@/components/Login/LogInCheckbox.vue";
+
 import { reactive, computed } from "vue";
 import { useStore } from "vuex";
 
@@ -11,6 +13,7 @@ import router from "@/router";
 const userData = reactive({
   username: undefined,
   password: undefined,
+  rememberMe: false,
 });
 const rules = computed(() => {
   return {
@@ -25,8 +28,8 @@ const store = useStore();
 const logIn = () => {
   v$.value.$validate();
   if (!v$.value.$error) {
-    router.push({ path: "/" });
     store.dispatch("logIn", userData);
+    router.push({ path: "/" });
   }
 };
 </script>
@@ -39,16 +42,17 @@ const logIn = () => {
       <LogInInput
         title="Username"
         placeholder="username..."
-        :errorMessage="v$.username.$error && v$.username.$errors[0].$message"
+        :errorMessage="v$.username.$errors[0]?.$message ?? ''"
         v-model="userData.username"
       />
       <LogInInput
         title="Password"
         placeholder="password..."
-        :errorMessage="v$.password.$error && v$.password.$errors[0].$message"
+        :errorMessage="v$.password.$errors[0]?.$message ?? ''"
         v-model="userData.password"
         type="password"
       />
+      <LogInCheckbox title="Remember me" v-model="userData.rememberMe" />
       <LogInButton text="Enter" @btn-click="logIn" />
       <h3 class="text-gray-100 text-sm text-center">
         New here?

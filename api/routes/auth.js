@@ -38,4 +38,15 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//? CHECK UNIQUE USERNAME
+
+router.post("/:username", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(200).json(true);
+    else return res.status(200).json(false);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
 module.exports = router;

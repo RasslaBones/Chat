@@ -120,6 +120,30 @@ const mainStore = createStore({
         }
       }
     },
+    async register(store, payload) {
+      if (payload.username && payload.email && payload.password) {
+        try {
+          await axios.post(process.env.VUE_APP_REGISTER_API, payload);
+          store.commit("LOGIN_USER", payload);
+        } catch (err) {
+          console.warn("register : ", err);
+        }
+      }
+    },
+    async checkUsername(store, payload) {
+      if (payload.username) {
+        try {
+          const res = await axios.post(
+            process.env.VUE_APP_CHECK_USER + payload.username
+          );
+          if (res.data) {
+            return true;
+          } else return false;
+        } catch (err) {
+          console.warn("checkUsername : ", err);
+        }
+      }
+    },
   },
   modules: {},
 });
