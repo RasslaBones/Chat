@@ -8,7 +8,7 @@ interface Props {
   errorMessage?: Ref<string> | string;
 }
 const props = defineProps<Props>();
-const emits = defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue", "input"]);
 
 const isTargetValid = (
   target: EventTarget | null
@@ -18,6 +18,7 @@ const isTargetValid = (
 const handleInput = (event: Event) => {
   if (isTargetValid(event?.target))
     emits("update:modelValue", event.target.value);
+  emits("input");
 };
 </script>
 <template>

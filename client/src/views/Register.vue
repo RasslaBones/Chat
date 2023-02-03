@@ -3,7 +3,6 @@ import RegisterInput from "@/components/Register/RegisterInput.vue";
 import RegisterButton from "@/components/Register/RegisterButton.vue";
 import { computed, reactive } from "vue";
 import { useStore } from "vuex";
-import router from "@/router";
 import { useVuelidate } from "@vuelidate/core";
 import {
   required,
@@ -13,10 +12,15 @@ import {
   minLength,
 } from "@vuelidate/validators";
 
-const checkUsername = async () => {
-  return await store.dispatch("checkUsername", registerVals);
-};
 const store = useStore();
+
+const CheckUsername = computed(() => {
+  return store.state.usernameError;
+});
+const CheckEmail = computed(() => {
+  return store.state.emailError;
+});
+
 const registerVals = reactive({
   username: "",
   email: "",
@@ -27,11 +31,19 @@ const rules = computed(() => {
   return {
     username: {
       required: helpers.withMessage("Username is required", required),
-      isUnique: checkUsername,
+      isUnique: helpers.withMessage(
+        "Username is already taken",
+        (): boolean => {
+          return CheckUsername.value;
+        }
+      ),
     },
     email: {
       required: helpers.withMessage("Email is required", required),
       email: helpers.withMessage("Email must be valid", email),
+      isUnique: helpers.withMessage("Email is already taken", (): boolean => {
+        return CheckEmail.value;
+      }),
     },
     password: {
       required: helpers.withMessage("Password is required", required),
@@ -50,14 +62,16 @@ const rules = computed(() => {
   };
 });
 
-const v$ = useVuelidate(rules, registerVals);
+const clearRegisterError = () => {
+  if (CheckUsername.value == false || CheckEmail.value == false)
+    store.commit("REGISTER_ERROR", { username: true, email: true });
+};
 
+const v$ = useVuelidate(rules, registerVals);
 const submit = async () => {
   v$.value.$validate();
   if (!v$.value.$error) {
-    console.log("register !");
-    // store.dispatch("register", registerVals);
-    // router.push({ path: "/" });
+    store.dispatch("register", registerVals);
   }
 };
 </script>
@@ -72,12 +86,14 @@ const submit = async () => {
         placeholder="Username"
         :error-message="v$.username.$errors[0]?.$message ?? ''"
         v-model="registerVals.username"
+        @input="clearRegisterError"
       />
       <RegisterInput
         title="Email"
         placeholder="Email"
         :error-message="v$.email.$errors[0]?.$message ?? ''"
         v-model="registerVals.email"
+        @input="clearRegisterError"
       />
       <RegisterInput
         title="Password"

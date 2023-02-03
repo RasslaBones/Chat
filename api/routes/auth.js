@@ -5,8 +5,15 @@ const bcrypt = require("bcrypt");
 //? REGISTER
 router.post("/register", async (req, res) => {
   try {
+    const userCheck = await User.findOne({ username: req.body.username });
+    if (userCheck) return res.status(403).json({ usernameError: true });
+
+    const emailCheck = await User.findOne({ email: req.body.email });
+    if (emailCheck) return res.status(403).json({ emailError: true });
+
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(req.body.password, salt);
+
     const newUser = new User({
       username: req.body.username,
       email: req.body.email,

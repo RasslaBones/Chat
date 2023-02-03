@@ -1,9 +1,13 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import { isAxiosError } from "axios";
+import router from "@/router";
 
 interface iState {
   messages: Message[];
   currentUser: User;
+  usernameError: boolean;
+  emailError: boolean;
 }
 
 interface Message {
@@ -33,6 +37,8 @@ const mainStore = createStore({
         profilePic: undefined,
         messagesSent: undefined,
       },
+      usernameError: true,
+      emailError: true,
     };
   },
   getters: {},
@@ -82,17 +88,22 @@ const mainStore = createStore({
       store.currentUser.profilePic = payload.profilePic;
       store.currentUser.messagesSent = payload.messagesSent;
     },
+    REGISTER_ERROR(store, payload) {
+      if (payload.username !== undefined)
+        store.usernameError = payload.username;
+      if (payload.email !== undefined) store.emailError = payload.email;
+    },
   },
   actions: {
-    async getMessages(store) {
+    async getMessages({ commit }) {
       try {
         const res = await axios.get(process.env.VUE_APP_GET_ALL_MESSAGE);
-        store.commit("GET_MESSAGES", res);
+        commit("GET_MESSAGES", res);
       } catch (err) {
         console.warn("getMessages : ", err);
       }
     },
-    async addMessage(store, payload) {
+    async addMessage({ commit }, payload) {
       if (payload.message && payload.username && payload.color) {
         const { userId } = payload;
         try {
@@ -103,44 +114,40 @@ const mainStore = createStore({
             messagesSent: res.data.messagesSent + 1,
           };
           await axios.put(process.env.VUE_APP_UPDATE_USER + userId, updateVals);
-          store.commit("ADD_MESSAGE", payload);
+          commit("ADD_MESSAGE", payload);
         } catch (err) {
           console.warn("addMessage : ", err);
         }
       }
     },
-    async logIn(store, payload) {
+    async logIn({ commit }, payload) {
       if (payload.username && payload.password) {
         try {
           const res = await axios.post(process.env.VUE_APP_LOGIN_API, payload);
-          store.commit("LOGIN_USER", res.data);
-          console.log("LOGIN SUCCESS!!", res.data);
+          commit("LOGIN_USER", res.data);
+          router.push({ path: "/" });
         } catch (err) {
           console.warn("login : ", err);
         }
       }
     },
-    async register(store, payload) {
+    async register({ commit }, payload) {
       if (payload.username && payload.email && payload.password) {
         try {
-          await axios.post(process.env.VUE_APP_REGISTER_API, payload);
-          store.commit("LOGIN_USER", payload);
-        } catch (err) {
-          console.warn("register : ", err);
-        }
-      }
-    },
-    async checkUsername(store, payload) {
-      if (payload.username) {
-        try {
+          commit("REGISTER_ERROR", { username: true, email: true });
           const res = await axios.post(
-            process.env.VUE_APP_CHECK_USER + payload.username
+            process.env.VUE_APP_REGISTER_API,
+            payload
           );
-          if (res.data) {
-            return true;
-          } else return false;
+          commit("LOGIN_USER", res.data);
+          router.push({ path: "/" });
         } catch (err) {
-          console.warn("checkUsername : ", err);
+          if (isAxiosError(err)) {
+            commit("REGISTER_ERROR", {
+              username: !err.response?.data.usernameError,
+              email: !err.response?.data.emailError,
+            });
+          }
         }
       }
     },
