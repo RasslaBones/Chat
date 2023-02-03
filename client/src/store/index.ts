@@ -151,6 +151,19 @@ const mainStore = createStore({
         }
       }
     },
+    async changeUserColor({ commit }, payload) {
+      if (payload.userId !== undefined && payload.color !== undefined) {
+        try {
+          await axios.put(
+            process.env.VUE_APP_UPDATE_USER + payload.userId,
+            payload
+          );
+          commit("CHANGE_USER_COLOR", payload.color);
+        } catch (err) {
+          console.warn("changeUserColor : ", err);
+        }
+      }
+    },
   },
   modules: {},
 });
