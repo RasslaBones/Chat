@@ -6,9 +6,9 @@ router.post("/", async (req, res) => {
   const newMessage = new Message(req.body);
   try {
     const savedMessage = await newMessage.save();
-    res.status(200).json(savedMessage);
+    return res.status(200).json(savedMessage);
   } catch (err) {
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 });
 
@@ -20,13 +20,13 @@ router.delete("/:id", async (req, res) => {
     if (message.username === req.body.username) {
       try {
         await message.delete();
-        res.status(200).json("Message has been deleted!");
+        return res.status(200).json("Message has been deleted!");
       } catch (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
     }
   } catch (err) {
-    res.status(404).json("User not found!");
+    return res.status(404).json("User not found!");
   }
 });
 
@@ -34,9 +34,9 @@ router.delete("/:id", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
-    res.status(200).json(message);
+    return res.status(200).json(message);
   } catch (err) {
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 });
 
@@ -48,9 +48,9 @@ router.get("/", async (req, res) => {
     if (username) {
       messages = await Message.find({ username: username });
     } else messages = await Message.find();
-    res.status(200).json(messages);
+    return res.status(200).json(messages);
   } catch (err) {
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 });
 module.exports = router;

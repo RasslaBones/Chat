@@ -2,15 +2,70 @@
 import ProfileInput from "@/components/Profile/ProfileInput.vue";
 import ProfileButton from "@/components/Profile/ProfileButton.vue";
 import ProfileColors from "@/components/Profile/ProfileColors.vue";
-import { ref, reactive } from "vue";
+
+import { ref, reactive, computed } from "vue";
 import { useStore } from "vuex";
+import { useVuelidate } from "@vuelidate/core";
+import { required, email, helpers } from "@vuelidate/validators";
+
 const store = useStore();
 const user = store.state.currentUser;
 
 const profileVals = reactive({
+  userId: user.userId,
   username: user.username,
   email: user.email,
-  password: user.password,
+  password: "",
+});
+
+const rules = computed(() => {
+  return {
+    username: {
+      isUnique: helpers.withMessage(
+        "Username is already taken",
+        (): boolean => {
+          return CheckUsername.value;
+        }
+      ),
+    },
+    email: {
+      email: helpers.withMessage("Email must be valid", email),
+      isUnique: helpers.withMessage("Email is already taken", (): boolean => {
+        return CheckEmail.value;
+      }),
+    },
+    password: {
+      required: helpers.withMessage("Password is required", required),
+      isValid: helpers.withMessage("Password is incorrect", (): boolean => {
+        return CheckPassword.value;
+      }),
+    },
+  };
+});
+
+const clearProfileError = () => {
+  if (
+    CheckUsername.value == false ||
+    CheckEmail.value == false ||
+    CheckPassword.value == false
+  ) {
+    store.commit("REGISTER_ERROR", {
+      username: true,
+      email: true,
+      password: true,
+    });
+  }
+};
+
+const CheckPassword = computed(() => {
+  return store.state.passwordError;
+});
+
+const CheckUsername = computed(() => {
+  return store.state.usernameError;
+});
+const CheckEmail = computed(() => {
+  return store.state.emailError;
 });
 
 const getUserDate = () => {
@@ -35,6 +90,20 @@ const changeColor = (color: string) => {
 };
 
 const disabled = ref(true);
+
+const v$ = useVuelidate(rules, profileVals);
+const updateUserValues = async () => {
+  if (disabled.value == false) {
+    await store.dispatch("checkUniqueUser", {
+      username: profileVals.username,
+      email: profileVals.email,
+    });
+    v$.value.$validate();
+    if (!v$.value.$error) {
+      store.dispatch("changeUserData", profileVals);
+    }
+  } else disabled.value = !disabled.value;
+};
 </script>
 <template>
   <div
@@ -107,24 +176,30 @@ const disabled = ref(true);
             :disabled="disabled"
             title="Username"
             v-model="profileVals.username"
+            :error-message="v$.username.$errors[0]?.$message ?? ''"
+            @input="clearProfileError"
           />
           <ProfileInput
             :disabled="disabled"
             title="Email"
             v-model="profileVals.email"
+            :error-message="v$.email.$errors[0]?.$message ?? ''"
+            @input="clearProfileError"
           />
           <ProfileInput :disabled="disabled" title="Bio" />
           <ProfileInput
             :disabled="disabled"
             title="Password"
             v-model="profileVals.password"
+            :error-message="v$.password.$errors[0]?.$message ?? ''"
+            @input="clearProfileError"
           />
         </div>
       </div>
       <div class="w-full flex justify-between">
         <ProfileButton @btnClick="" title="Log Out" />
         <ProfileButton
-          @btnClick="disabled = !disabled"
+          @btnClick="updateUserValues()"
           :title="disabled ? 'Update Settings' : 'Confirm'"
         />
       </div>

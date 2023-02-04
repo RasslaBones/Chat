@@ -107,6 +107,12 @@ const submit = async () => {
         :error-message="v$.confirmPassword.$errors[0]?.$message ?? ''"
         v-model="registerVals.confirmPassword"
       />
+      <h3 class="text-gray-100 text-sm">
+        Have an existing account?
+        <router-link to="/Login" class="text-blue-500 underline"
+          >Log In</router-link
+        >
+      </h3>
       <RegisterButton text="Submit" @btn-click="submit" />
     </div>
   </div>

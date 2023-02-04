@@ -8,6 +8,8 @@ interface iState {
   currentUser: User;
   usernameError: boolean;
   emailError: boolean;
+  passwordError: boolean;
+  loginError: boolean;
 }
 
 interface Message {
@@ -39,6 +41,8 @@ const mainStore = createStore({
       },
       usernameError: true,
       emailError: true,
+      passwordError: true,
+      loginError: false,
     };
   },
   getters: {},
@@ -74,10 +78,9 @@ const mainStore = createStore({
         store.currentUser.color = payload;
       }
     },
-    CHANGE_USER_USERNAME(store, payload: string) {
-      if (store.currentUser) {
-        store.currentUser.username = payload;
-      }
+    CHANGE_USER_VALS(store, payload) {
+      if (payload.username) store.currentUser.username = payload.username;
+      if (payload.email) store.currentUser.email = payload.email;
     },
     LOGIN_USER(store, payload) {
       store.currentUser.userId = payload._id;
@@ -92,6 +95,11 @@ const mainStore = createStore({
       if (payload.username !== undefined)
         store.usernameError = payload.username;
       if (payload.email !== undefined) store.emailError = payload.email;
+      if (payload.password !== undefined)
+        store.passwordError = payload.password;
+    },
+    LOGIN_ERROR(store, payload) {
+      store.loginError = payload;
     },
   },
   actions: {
@@ -125,9 +133,12 @@ const mainStore = createStore({
         try {
           const res = await axios.post(process.env.VUE_APP_LOGIN_API, payload);
           commit("LOGIN_USER", res.data);
+          commit("LOGIN_ERROR", false);
           router.push({ path: "/" });
         } catch (err) {
-          console.warn("login : ", err);
+          if (isAxiosError(err)) {
+            commit("LOGIN_ERROR", true);
+          }
         }
       }
     },
@@ -151,6 +162,28 @@ const mainStore = createStore({
         }
       }
     },
+    async changeUserData({ commit }, payload) {
+      console.log(payload);
+      if (payload.userId !== undefined && payload.password !== undefined) {
+        try {
+          await axios.put(
+            process.env.VUE_APP_UPDATE_USER + payload.userId,
+            payload
+          );
+          commit("CHANGE_USER_VALS", {
+            username: payload.username,
+            email: payload.email,
+          });
+          router.push({ path: "/" });
+        } catch (err) {
+          if (isAxiosError(err)) {
+            commit("REGISTER_ERROR", {
+              password: !err.response?.data.valid,
+            });
+          }
+        }
+      }
+    },
     async changeUserColor({ commit }, payload) {
       if (payload.userId !== undefined && payload.color !== undefined) {
         try {
@@ -162,6 +195,28 @@ const mainStore = createStore({
         } catch (err) {
           console.warn("changeUserColor : ", err);
         }
+      }
+    },
+    async checkUniqueUser({ commit }, payload) {
+      try {
+        if (payload.username !== undefined) {
+          const usernameRes = await axios.post(
+            process.env.VUE_APP_CHECK_USER + payload.username,
+            { username: true }
+          );
+          if (usernameRes.data == false)
+            commit("REGISTER_ERROR", { username: false });
+        }
+        if (payload.email !== undefined) {
+          const emailRes = await axios.post(
+            process.env.VUE_APP_CHECK_USER + payload.email,
+            { email: true }
+          );
+          if (emailRes.data == false)
+            commit("REGISTER_ERROR", { email: false });
+        }
+      } catch (err) {
+        console.warn("checkUniqueUser : ", err);
       }
     },
   },

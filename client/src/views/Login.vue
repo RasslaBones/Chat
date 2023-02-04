@@ -29,7 +29,6 @@ const logIn = () => {
   v$.value.$validate();
   if (!v$.value.$error) {
     store.dispatch("logIn", userData);
-    router.push({ path: "/" });
   }
 };
 </script>
@@ -39,6 +38,12 @@ const logIn = () => {
   >
     <div class="bg-gray-900 p-4 px-16 flex flex-col gap-4 rounded-md">
       <h1 class="text-gray-100 text-3xl font-medium text-center">Log In</h1>
+      <h3
+        class="w-[180px] text-red-400 outline-1 outline-red-400 outline rounded-md p-1 text-center"
+        v-if="store.state.loginError"
+      >
+        Couldn't find user with that username
+      </h3>
       <LogInInput
         title="Username"
         placeholder="username..."
