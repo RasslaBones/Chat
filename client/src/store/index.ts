@@ -48,6 +48,7 @@ const mainStore = createStore({
   getters: {},
   mutations: {
     ADD_MESSAGE(store, payload): void {
+      console.log("ADDMESSAGE,", payload);
       const res = {
         message: payload.message,
         user: {
@@ -60,16 +61,16 @@ const mainStore = createStore({
     },
     GET_MESSAGES(store, payload) {
       store.messages = [];
-      for (let i = 0; i < payload.data.length; i++) {
+      for (let i = 0; i < payload.length; i++) {
         const user = {
-          username: payload.data[i].username,
-          color: payload.data[i].color,
-          userId: payload.data[i].userId,
+          username: payload[i].username,
+          color: payload[i].color,
+          userId: payload[i].userId,
         };
 
         store.messages.push({
-          message: payload.data[i].message,
-          user: user,
+          message: payload[i].message,
+          user,
         });
       }
     },
@@ -91,6 +92,16 @@ const mainStore = createStore({
       store.currentUser.profilePic = payload.profilePic;
       store.currentUser.messagesSent = payload.messagesSent;
     },
+    LOG_OUT(store) {
+      store.currentUser.userId = undefined;
+      store.currentUser.username = undefined;
+      store.currentUser.color = undefined;
+      store.currentUser.createdAt = undefined;
+      store.currentUser.email = undefined;
+      store.currentUser.profilePic = undefined;
+      store.currentUser.messagesSent = undefined;
+      router.push({ path: "/Login" });
+    },
     REGISTER_ERROR(store, payload) {
       if (payload.username !== undefined)
         store.usernameError = payload.username;
@@ -106,22 +117,26 @@ const mainStore = createStore({
     async getMessages({ commit }) {
       try {
         const res = await axios.get(process.env.VUE_APP_GET_ALL_MESSAGE);
-        commit("GET_MESSAGES", res);
+        commit("GET_MESSAGES", res.data);
       } catch (err) {
         console.warn("getMessages : ", err);
       }
     },
     async addMessage({ commit }, payload) {
       if (payload.message && payload.username && payload.color) {
-        const { userId } = payload;
         try {
-          const res = await axios.get(process.env.VUE_APP_GET_USER + userId);
+          const res = await axios.get(
+            process.env.VUE_APP_GET_USER + payload.userId
+          );
           await axios.post(process.env.VUE_APP_CREATE_MESSAGE, payload);
           const updateVals = {
-            userId: userId,
+            userId: payload.userId,
             messagesSent: res.data.messagesSent + 1,
           };
-          await axios.put(process.env.VUE_APP_UPDATE_USER + userId, updateVals);
+          await axios.put(
+            process.env.VUE_APP_UPDATE_NOPASS_USER + payload.userId,
+            updateVals
+          );
           commit("ADD_MESSAGE", payload);
         } catch (err) {
           console.warn("addMessage : ", err);
@@ -188,7 +203,7 @@ const mainStore = createStore({
       if (payload.userId !== undefined && payload.color !== undefined) {
         try {
           await axios.put(
-            process.env.VUE_APP_UPDATE_USER + payload.userId,
+            process.env.VUE_APP_UPDATE_NOPASS_USER + payload.userId,
             payload
           );
           commit("CHANGE_USER_COLOR", payload.color);

@@ -3,7 +3,7 @@ const User = require("../models/User");
 const Message = require("../models/Message");
 const bcrypt = require("bcrypt");
 
-//? UPDATE
+//? UPDATE WITH PASS
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id) {
     if (req.body.password) {
@@ -30,6 +30,24 @@ router.put("/:id", async (req, res) => {
     }
   } else {
     return res.status(401).json("You can update only your account!");
+  }
+});
+
+//? UPDATE WITHOUT PASS
+router.put("/nopass/:id", async (req, res) => {
+  if (req.body.userId === req.params.id) {
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: req.body,
+        },
+        { new: true }
+      );
+      return res.status(200).json(updatedUser);
+    } catch (err) {
+      return res.status(401).json("You can update only your account!");
+    }
   }
 });
 

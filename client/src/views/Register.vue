@@ -80,7 +80,22 @@ const submit = async () => {
     class="w-screen h-screen bg-gray-800 relative overflow-hidden py-8 flex items-center justify-center"
   >
     <div class="bg-gray-900 py-8 px-16 flex flex-col gap-4 rounded-md">
-      <h1 class="text-gray-100 text-3xl font-medium text-center">Register</h1>
+      <h1 class="text-gray-100 text-3xl font-medium text-center relative">
+        Register
+        <router-link
+          to="/"
+          class="absolute top-1/2 -translate-y-1/2 -left-12 cursor-pointer fill-gray-500 hover:fill-gray-600"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M16 22L6 12L16 2l1.775 1.775L9.55 12l8.225 8.225Z" />
+          </svg>
+        </router-link>
+      </h1>
       <RegisterInput
         title="Username"
         placeholder="Username"

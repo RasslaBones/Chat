@@ -2,7 +2,7 @@
 import ProfileInput from "@/components/Profile/ProfileInput.vue";
 import ProfileButton from "@/components/Profile/ProfileButton.vue";
 import ProfileColors from "@/components/Profile/ProfileColors.vue";
-
+import router from "@/router";
 import { ref, reactive, computed } from "vue";
 import { useStore } from "vuex";
 import { useVuelidate } from "@vuelidate/core";
@@ -86,7 +86,14 @@ const colors = [
 ];
 
 const changeColor = (color: string) => {
-  store.dispatch("changeUserColor", { userId: user.userId, color });
+  store.dispatch("changeUserColor", {
+    userId: user.userId,
+    color,
+  });
+};
+
+const logOut = () => {
+  store.commit("LOG_OUT");
 };
 
 const disabled = ref(true);
@@ -197,7 +204,7 @@ const updateUserValues = async () => {
         </div>
       </div>
       <div class="w-full flex justify-between">
-        <ProfileButton @btnClick="" title="Log Out" />
+        <ProfileButton @btnClick="logOut" title="Log Out" />
         <ProfileButton
           @btnClick="updateUserValues()"
           :title="disabled ? 'Update Settings' : 'Confirm'"

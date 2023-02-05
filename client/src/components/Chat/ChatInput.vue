@@ -40,18 +40,6 @@ const isTextAreaDomElement = (
   return element.value !== null;
 };
 
-const resizeTextArea = (event: Event) => {
-  if (isTextAreaDomElement(textarea)) {
-    if (isTargetValid(event.target)) {
-      let scHeight = event.target.scrollHeight;
-      textarea.value.style.height = `${scHeight}px`;
-      if (event.target.value.length == 0) {
-        textarea.value.style.height = `40px`;
-      }
-    }
-  }
-};
-
 const isTargetValid = (
   target: EventTarget | null
 ): target is HTMLTextAreaElement => {
@@ -64,8 +52,9 @@ onMounted(() => {
       if (isTargetValid(event.target)) {
         let scHeight = event.target.scrollHeight;
         textarea.value.style.height = `${scHeight}px`;
-        if (event.target.value.length == 0) {
+        if (event.target.value.trim().length == 0) {
           textarea.value.style.height = `40px`;
+          emit("update:modelValue", "");
         }
       }
     });
