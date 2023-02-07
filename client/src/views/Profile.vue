@@ -2,22 +2,30 @@
 import ProfileInput from "@/components/Profile/ProfileInput.vue";
 import ProfileButton from "@/components/Profile/ProfileButton.vue";
 import ProfileColors from "@/components/Profile/ProfileColors.vue";
-import router from "@/router";
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
+import axios from "axios";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email, helpers } from "@vuelidate/validators";
+import { User } from "@/store/index";
 
 const store = useStore();
-const user = store.state.currentUser;
-
+const { params } = useRoute();
+let user = ref<User>({});
+onMounted(async () => {
+  const { data } = await axios.get<User>(
+    process.env.VUE_APP_GET_USER + params.id
+  );
+  user.value = data;
+});
+const currentUser = store.state.currentUser;
 const profileVals = reactive({
-  userId: user.userId,
-  username: user.username,
-  email: user.email,
+  userId: currentUser.userId,
+  username: currentUser.username,
+  email: currentUser.email,
   password: "",
 });
-
 const rules = computed(() => {
   return {
     username: {
@@ -69,7 +77,7 @@ const CheckEmail = computed(() => {
 });
 
 const getUserDate = () => {
-  const userDate = Date.parse(user.createdAt);
+  const userDate = Date.parse(currentUser.createdAt);
   const currentDate = Date.now();
   return Math.round((currentDate - userDate) / (1000 * 3600 * 24));
 };
@@ -87,7 +95,7 @@ const colors = [
 
 const changeColor = (color: string) => {
   store.dispatch("changeUserColor", {
-    userId: user.userId,
+    userId: currentUser.userId,
     color,
   });
 };

@@ -7,7 +7,10 @@
     <ChatEmpty v-if="store.state.messages.length === 0" />
     <ChatField v-else>
       <div v-for="(item, index) in store.state.messages" :key="index">
-        <router-link to="/" :style="`color: ${item.user.color}`">
+        <router-link
+          :to="'Profile/' + item.user.userId"
+          :style="`color: ${item.user.color}`"
+        >
           {{ item.user.username }}
         </router-link>
         <span class="text-gray-300">: {{ item.message }}</span>

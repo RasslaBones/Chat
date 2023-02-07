@@ -45,7 +45,8 @@ const getColor = (color: string) => {
 };
 
 const getUser = computed(() => {
-  if (store.state.currentUser.userId) return "Profile";
+  if (store.state.currentUser.userId)
+    return `/Profile/${store.state.currentUser.userId}`;
   return "Login";
 });
 </script>

@@ -17,7 +17,7 @@ interface Message {
   user: User;
 }
 
-interface User {
+export interface User {
   userId?: string;
   username?: string;
   email?: string;
