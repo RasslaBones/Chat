@@ -36,7 +36,6 @@ const user = store.state.currentUser;
 function addMessage() {
   store.dispatch("addMessage", {
     message: msg.value,
-    username: user.username,
     userId: user.userId,
     color: user.color,
   });

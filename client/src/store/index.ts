@@ -123,11 +123,12 @@ const mainStore = createStore({
       }
     },
     async addMessage({ commit }, payload) {
-      if (payload.message && payload.username && payload.color) {
+      if (payload.message && payload.color) {
         try {
           const res = await axios.get(
             process.env.VUE_APP_GET_USER + payload.userId
           );
+          payload.username = res.data.username;
           await axios.post(process.env.VUE_APP_CREATE_MESSAGE, payload);
           const updateVals = {
             userId: payload.userId,

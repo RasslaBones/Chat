@@ -1,9 +1,12 @@
 const router = require("express").Router();
 const Message = require("../models/Message");
+const User = require("../models/User");
 
 //? CREATE
 router.post("/", async (req, res) => {
   const newMessage = new Message(req.body);
+  const user = await User.findOne({ _id: newMessage.userId });
+  newMessage.username = user.username;
   try {
     const savedMessage = await newMessage.save();
     return res.status(200).json(savedMessage);
@@ -42,12 +45,13 @@ router.get("/:id", async (req, res) => {
 
 //? GET ALL
 router.get("/", async (req, res) => {
-  const username = req.query.user;
   try {
     let messages;
-    if (username) {
-      messages = await Message.find({ username: username });
-    } else messages = await Message.find();
+    messages = await Message.find();
+    for await (item of messages) {
+      const user = await User.findOne({ _id: item.userId });
+      item.username = user.username;
+    }
     return res.status(200).json(messages);
   } catch (err) {
     return res.status(500).json(err);
