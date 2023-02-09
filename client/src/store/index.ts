@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import axios from "axios";
+import axios from "@/global";
 import { isAxiosError } from "axios";
 import router from "@/router";
 
@@ -48,7 +48,6 @@ const mainStore = createStore({
   getters: {},
   mutations: {
     ADD_MESSAGE(store, payload): void {
-      console.log("ADDMESSAGE,", payload);
       const res = {
         message: payload.message,
         user: {
@@ -91,6 +90,7 @@ const mainStore = createStore({
       store.currentUser.email = payload.email;
       store.currentUser.profilePic = payload.profilePic;
       store.currentUser.messagesSent = payload.messagesSent;
+      router.push({path: '/'})
     },
     LOG_OUT(store) {
       store.currentUser.userId = undefined;
@@ -146,8 +146,12 @@ const mainStore = createStore({
     },
     async logIn({ commit }, payload) {
       if (payload.username && payload.password) {
+        const {rememberMe, ...others} = payload
         try {
-          const res = await axios.post(process.env.VUE_APP_LOGIN_API, payload);
+          const res = await axios.post(process.env.VUE_APP_LOGIN_API, others);
+          const { token } = res.data
+          if(rememberMe)
+            document.cookie = `token=${token}`
           commit("LOGIN_USER", res.data);
           commit("LOGIN_ERROR", false);
           router.push({ path: "/" });
@@ -166,6 +170,8 @@ const mainStore = createStore({
             process.env.VUE_APP_REGISTER_API,
             payload
           );
+          const { token } = res.data
+          document.cookie = `token=${token}`
           commit("LOGIN_USER", res.data);
           router.push({ path: "/" });
         } catch (err) {

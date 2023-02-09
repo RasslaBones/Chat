@@ -3,7 +3,7 @@ import ProfileInput from "@/components/Profile/ProfileInput.vue";
 import ProfileButton from "@/components/Profile/ProfileButton.vue";
 import ProfileColors from "@/components/Profile/ProfileColors.vue";
 import { ref, reactive, computed, onMounted } from "vue";
-import axios from "axios";
+import axios from "@/global";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useVuelidate } from "@vuelidate/core";

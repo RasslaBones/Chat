@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 interface Props {
   title: string;
-  modelValue: boolean;
+  modelValue?: boolean;
 }
 const props = defineProps<Props>();
 const emits = defineEmits(["update:modelValue"]);
@@ -12,8 +12,9 @@ const isTargetValid = (
   return target !== null;
 };
 const handleInput = (event: Event) => {
-  if (isTargetValid(event?.target))
-    emits("update:modelValue", event.target.value);
+  if (isTargetValid(event?.target)) {
+    emits("update:modelValue", event.target.value === "true" ? false : true);
+  }
 };
 </script>
 <template>

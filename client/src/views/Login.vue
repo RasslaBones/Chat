@@ -53,7 +53,7 @@ const logIn = () => {
         </router-link>
       </h1>
       <h3
-        class="w-[180px] text-red-400 outline-1 outline-red-400 outline rounded-md p-1 text-center"
+        class="w-[180px] text-red-400 outline-1 outline-red-400 outline rounded-md p-1 text-center mx-auto"
         v-if="store.state.loginError"
       >
         Couldn't find user with that username
