@@ -13,6 +13,7 @@ import { User } from "@/store/index";
 const store = useStore();
 const { params } = useRoute();
 let user = ref<User>({});
+
 onMounted(async () => {
   const { data } = await axios.get<User>(
     process.env.VUE_APP_GET_USER + params.id
@@ -119,6 +120,10 @@ const updateUserValues = async () => {
     }
   } else disabled.value = !disabled.value;
 };
+
+const checkUserProfile = computed(() => {
+  return store.state.currentUser.userId == user.value._id;
+});
 </script>
 <template>
   <div
@@ -163,7 +168,10 @@ const updateUserValues = async () => {
       <h1 class="text-2xl text-gray-100">
         {{ user.username }}'s Private Information
       </h1>
-      <div class="flex justify-between mt-4 gap-2 h-max">
+      <div
+        class="flex justify-between mt-4 gap-2 h-max"
+        v-show="checkUserProfile"
+      >
         <div class="flex flex-col gap-4 w-1/3">
           <h1 class="text-gray-100 text-lg">Change username Color</h1>
           <div class="px-2 grid grid-cols-4 gap-4 items-center h-full">

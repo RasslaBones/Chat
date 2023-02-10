@@ -18,6 +18,7 @@ interface Message {
 }
 
 export interface User {
+  _id?: string;
   userId?: string;
   username?: string;
   email?: string;
@@ -93,6 +94,7 @@ const mainStore = createStore({
       router.push({path: '/'})
     },
     LOG_OUT(store) {
+      document.cookie = "token=;Max-Age=0"
       store.currentUser.userId = undefined;
       store.currentUser.username = undefined;
       store.currentUser.color = undefined;
