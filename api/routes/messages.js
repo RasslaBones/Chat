@@ -51,6 +51,7 @@ router.get("/", async (req, res) => {
     for await (item of messages) {
       const user = await User.findOne({ _id: item.userId });
       item.username = user.username;
+      item.color = user.color
     }
     return res.status(200).json(messages);
   } catch (err) {

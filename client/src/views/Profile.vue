@@ -2,23 +2,28 @@
 import ProfileInput from "@/components/Profile/ProfileInput.vue";
 import ProfileButton from "@/components/Profile/ProfileButton.vue";
 import ProfileColors from "@/components/Profile/ProfileColors.vue";
+import ProfileLoader from "@/components/Profile/ProfileLoader.vue";
+
 import { ref, reactive, computed, onMounted } from "vue";
 import axios from "@/global";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useVuelidate } from "@vuelidate/core";
-import { required, email, helpers } from "@vuelidate/validators";
+import { required, email, helpers, maxLength } from "@vuelidate/validators";
 import { User } from "@/store/index";
 
 const store = useStore();
 const { params } = useRoute();
 let user = ref<User>({});
 
+const loading = ref(true);
 onMounted(async () => {
+  loading.value = true;
   const { data } = await axios.get<User>(
     process.env.VUE_APP_GET_USER + params.id
   );
   user.value = data;
+  loading.value = false;
 });
 const currentUser = store.state.currentUser;
 const profileVals = reactive({
@@ -129,15 +134,20 @@ const checkUserProfile = computed(() => {
   <div
     class="w-screen h-screen bg-gray-800 relative overflow-hidden py-8 flex items-center justify-center"
   >
-    <div class="bg-gray-900 w-[650px] p-4">
-      <div class="flex gap-4">
+    <div class="bg-gray-900 w-[650px] h-[532px] p-4 relative">
+      <ProfileLoader v-show="loading" />
+      <div class="flex gap-4" v-show="!loading">
         <div class="flex flex-col gap-2">
           <div
             class="w-[125px] h-[125px] outline outline-1 outline-gray-100 flex items-center justify-center text-white"
           >
             User Image
           </div>
-          <ProfileButton @btnClick="" title="Change Image" />
+          <ProfileButton
+            @btnClick=""
+            title="Change Image"
+            v-show="checkUserProfile"
+          />
         </div>
         <div class="flex flex-col gap-4 flex-1">
           <h1 class="text-gray-100 text-3xl">
@@ -164,8 +174,8 @@ const checkUserProfile = computed(() => {
           </svg>
         </router-link>
       </div>
-      <hr class="my-6" />
-      <h1 class="text-2xl text-gray-100">
+      <hr class="my-6" v-show="!loading" />
+      <h1 class="text-2xl text-gray-100" v-show="checkUserProfile">
         {{ user.username }}'s Private Information
       </h1>
       <div
@@ -186,7 +196,7 @@ const checkUserProfile = computed(() => {
             class="text-gray-100 max-h-6 h-full text-ellipsis overflow-hidden whitespace-nowrap"
           >
             Current color:
-            <span :style="`color: ${user.color}`"
+            <span :style="`color: ${currentUser.color}`"
               >Loremipsumdolorsit, amet consectetur adipisicing elit. Cumque,
               numquam?
             </span>
@@ -209,7 +219,6 @@ const checkUserProfile = computed(() => {
             :error-message="v$.email.$errors[0]?.$message ?? ''"
             @input="clearProfileError"
           />
-          <ProfileInput :disabled="disabled" title="Bio" />
           <ProfileInput
             :disabled="disabled"
             title="Password"
@@ -219,7 +228,7 @@ const checkUserProfile = computed(() => {
           />
         </div>
       </div>
-      <div class="w-full flex justify-between">
+      <div class="w-full flex justify-between" v-show="checkUserProfile">
         <ProfileButton @btnClick="logOut" title="Log Out" />
         <ProfileButton
           @btnClick="updateUserValues()"
