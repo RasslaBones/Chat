@@ -6,7 +6,7 @@ const props = defineProps<Props>();
 </script>
 <template>
   <div
-    class="w-[35px] min-h-[35px] h-full cursor-pointer"
+    class="sm:w-[35px] w-full min-h-[35px] h-full cursor-pointer"
     :style="{ backgroundColor: props.color ? props.color : '' }"
   ></div>
 </template>

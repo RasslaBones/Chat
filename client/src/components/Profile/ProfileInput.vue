@@ -23,9 +23,9 @@ const handleInput = (event: Event) => {
 };
 </script>
 <template>
-  <div class="flex gap-2">
+  <div class="flex sm:justify-start justify-between">
     <h1 class="text-gray-100 text-lg font-medium min-w-[125px]">{{ title }}</h1>
-    <div class="flex flex-col gap-1 w-full">
+    <div class="flex flex-col gap-1 w-full sm:max-w-[270px] max-w-[350px]">
       <textarea
         type="text"
         class="w-full resize-none outline-none bg-gray-800 disabled:bg-[#1c2530] rounded-md px-2 py-1 text-gray-100 disabled:text-gray-400 focus:outline-violet-500 transition-all"

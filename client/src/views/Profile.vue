@@ -132,109 +132,107 @@ const checkUserProfile = computed(() => {
 </script>
 <template>
   <div
-    class="w-screen h-screen bg-gray-800 relative overflow-hidden py-8 flex items-center justify-center"
+    class="bg-gray-900 sm:w-[650px] w-screen sm:h-[540px] h-screen flex flex-col mx-auto p-4 relative"
   >
-    <div class="bg-gray-900 w-[650px] h-[532px] p-4 relative">
-      <ProfileLoader v-show="loading" />
-      <div class="flex gap-4" v-show="!loading">
-        <div class="flex flex-col gap-2">
-          <div
-            class="w-[125px] h-[125px] outline outline-1 outline-gray-100 flex items-center justify-center text-white"
-          >
-            User Image
-          </div>
-          <ProfileButton
-            @btnClick=""
-            title="Change Image"
-            v-show="checkUserProfile"
-          />
+    <ProfileLoader v-show="loading" />
+    <div class="flex gap-4" v-show="!loading">
+      <div class="flex flex-col gap-2">
+        <div
+          class="sm:w-[125px] sm:h-[125px] w-[100px] h-[100px] outline outline-1 outline-gray-100 flex items-center justify-center text-white sm:text-base text-sm"
+        >
+          User Image
         </div>
-        <div class="flex flex-col gap-4 flex-1">
-          <h1 class="text-gray-100 text-3xl">
-            {{ user.username }}'s Profile Settings
-          </h1>
-          <h3 class="text-gray-300 text-base">
-            {{ user.username }}'s account was created {{ getUserDate() }} days
-            ago.
-          </h3>
-          <h3 class="text-gray-300 text-base">
-            {{ user.username }} sent {{ user.messagesSent }} messages.
-          </h3>
-        </div>
-        <router-link to="/" class="h-max fill-gray-400 hover:fill-gray-500">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6Z"
-            />
-          </svg>
-        </router-link>
-      </div>
-      <hr class="my-6" v-show="!loading" />
-      <h1 class="text-2xl text-gray-100" v-show="checkUserProfile">
-        {{ user.username }}'s Private Information
-      </h1>
-      <div
-        class="flex justify-between mt-4 gap-2 h-max"
-        v-show="checkUserProfile"
-      >
-        <div class="flex flex-col gap-4 w-1/3">
-          <h1 class="text-gray-100 text-lg">Change username Color</h1>
-          <div class="px-2 grid grid-cols-4 gap-4 items-center h-full">
-            <ProfileColors
-              :color="item"
-              v-for="(item, index) in colors"
-              :key="index"
-              @click="changeColor(item)"
-            />
-          </div>
-          <h2
-            class="text-gray-100 max-h-6 h-full text-ellipsis overflow-hidden whitespace-nowrap"
-          >
-            Current color:
-            <span :style="`color: ${currentUser.color}`"
-              >Loremipsumdolorsit, amet consectetur adipisicing elit. Cumque,
-              numquam?
-            </span>
-          </h2>
-        </div>
-        <div class="w-[2px] bg-gray-100"></div>
-        <div class="flex flex-col w-2/3 gap-4">
-          <h1 class="text-gray-100 text-lg">Update profile values</h1>
-          <ProfileInput
-            :disabled="disabled"
-            title="Username"
-            v-model="profileVals.username"
-            :error-message="v$.username.$errors[0]?.$message ?? ''"
-            @input="clearProfileError"
-          />
-          <ProfileInput
-            :disabled="disabled"
-            title="Email"
-            v-model="profileVals.email"
-            :error-message="v$.email.$errors[0]?.$message ?? ''"
-            @input="clearProfileError"
-          />
-          <ProfileInput
-            :disabled="disabled"
-            title="Password"
-            v-model="profileVals.password"
-            :error-message="v$.password.$errors[0]?.$message ?? ''"
-            @input="clearProfileError"
-          />
-        </div>
-      </div>
-      <div class="w-full flex justify-between" v-show="checkUserProfile">
-        <ProfileButton @btnClick="logOut" title="Log Out" />
         <ProfileButton
-          @btnClick="updateUserValues()"
-          :title="disabled ? 'Update Settings' : 'Confirm'"
+          @btnClick=""
+          title="Change Image"
+          v-show="checkUserProfile"
         />
       </div>
+      <div class="flex flex-col sm:gap-4 gap-2 flex-1">
+        <h1 class="text-gray-100 sm:text-3xl text-xl">
+          {{ user.username }}'s Profile Settings
+        </h1>
+        <h3 class="text-gray-300 sm:text-base text-sm">
+          {{ user.username }}'s account was created {{ getUserDate() }} days
+          ago.
+        </h3>
+        <h3 class="text-gray-300 sm:text-base text-sm">
+          {{ user.username }} sent {{ user.messagesSent }} messages.
+        </h3>
+      </div>
+      <router-link to="/" class="h-max fill-gray-400 hover:fill-gray-500">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6Z"
+          />
+        </svg>
+      </router-link>
+    </div>
+    <hr class="my-6" v-show="!loading" />
+    <h1 class="sm:text-2xl text-xl text-gray-100" v-show="checkUserProfile">
+      {{ user.username }}'s Private Information
+    </h1>
+    <div
+      class="flex sm:flex-row flex-col justify-between mt-4 gap-2 h-max"
+      v-show="checkUserProfile"
+    >
+      <div class="flex flex-col gap-4 sm:w-1/3 w-full">
+        <h1 class="text-gray-100 text-lg">Change username Color</h1>
+        <div class="px-2 grid grid-cols-4 gap-4 items-center h-full">
+          <ProfileColors
+            :color="item"
+            v-for="(item, index) in colors"
+            :key="index"
+            @click="changeColor(item)"
+          />
+        </div>
+        <h2
+          class="text-gray-100 max-h-6 h-full text-ellipsis overflow-hidden whitespace-nowrap"
+        >
+          Current color:
+          <span :style="`color: ${currentUser.color}`"
+            >{{ currentUser.username }}
+          </span>
+        </h2>
+      </div>
+      <div class="w-[1px] bg-[#e5e7eb] sm:block hidden"></div>
+      <hr class="sm:hidden block my-4" />
+      <div class="flex flex-col sm:w-2/3 w-full gap-4">
+        <h1 class="text-gray-100 text-lg">Update profile values</h1>
+        <ProfileInput
+          :disabled="disabled"
+          title="Username"
+          v-model="profileVals.username"
+          :error-message="v$.username.$errors[0]?.$message ?? ''"
+          @input="clearProfileError"
+        />
+        <ProfileInput
+          :disabled="disabled"
+          title="Email"
+          v-model="profileVals.email"
+          :error-message="v$.email.$errors[0]?.$message ?? ''"
+          @input="clearProfileError"
+        />
+        <ProfileInput
+          :disabled="disabled"
+          title="Password"
+          v-model="profileVals.password"
+          :error-message="v$.password.$errors[0]?.$message ?? ''"
+          @input="clearProfileError"
+        />
+      </div>
+    </div>
+    <div class="w-full self-end flex justify-between" v-show="checkUserProfile">
+      <ProfileButton @btnClick="logOut" title="Log Out" />
+      <ProfileButton
+        @btnClick="updateUserValues()"
+        :title="disabled ? 'Update Settings' : 'Confirm'"
+      />
     </div>
   </div>
 </template>

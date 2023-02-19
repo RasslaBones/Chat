@@ -9,7 +9,7 @@ import { useStore } from "vuex";
 
 const store = useStore();
 
-const geteCookie = (cname: string) => {
+const getACookie = (cname: string) => {
   let name = cname + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
   let ca = decodedCookie.split(";");
@@ -26,7 +26,7 @@ const geteCookie = (cname: string) => {
 };
 
 onBeforeMount(async () => {
-  const token = geteCookie("token");
+  const token = getACookie("token");
   if (token) {
     AxiosInstance.defaults.headers.common["token"] = token;
     const res = await AxiosInstance.get(

@@ -76,59 +76,55 @@ const submit = async () => {
 };
 </script>
 <template>
-  <div
-    class="w-screen h-screen bg-gray-800 relative overflow-hidden py-8 flex items-center justify-center"
-  >
-    <div class="bg-gray-900 py-8 px-16 flex flex-col gap-4 rounded-md">
-      <h1 class="text-gray-100 text-3xl font-medium text-center relative">
-        Register
-        <router-link
-          to="/"
-          class="absolute top-1/2 -translate-y-1/2 -left-12 cursor-pointer fill-gray-500 hover:fill-gray-600"
+  <div class="bg-gray-900 py-8 sm:px-16 px-8 flex flex-col gap-4 rounded-md">
+    <h1 class="text-gray-100 text-3xl font-medium text-center relative">
+      Register
+      <router-link
+        to="/"
+        class="absolute top-1/2 -translate-y-1/2 sm:-left-12 -left-6 cursor-pointer fill-gray-500 hover:fill-gray-600"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path d="M16 22L6 12L16 2l1.775 1.775L9.55 12l8.225 8.225Z" />
-          </svg>
-        </router-link>
-      </h1>
-      <RegisterInput
-        title="Username"
-        placeholder="Username"
-        :error-message="v$.username.$errors[0]?.$message ?? ''"
-        v-model="registerVals.username"
-        @input="clearRegisterError"
-      />
-      <RegisterInput
-        title="Email"
-        placeholder="Email"
-        :error-message="v$.email.$errors[0]?.$message ?? ''"
-        v-model="registerVals.email"
-        @input="clearRegisterError"
-      />
-      <RegisterInput
-        title="Password"
-        placeholder="Password"
-        :error-message="v$.password.$errors[0]?.$message ?? ''"
-        v-model="registerVals.password"
-      />
-      <RegisterInput
-        title="Confirm password"
-        placeholder="Confirm password"
-        :error-message="v$.confirmPassword.$errors[0]?.$message ?? ''"
-        v-model="registerVals.confirmPassword"
-      />
-      <h3 class="text-gray-100 text-sm">
-        Have an existing account?
-        <router-link to="/Login" class="text-blue-500 underline"
-          >Log In</router-link
-        >
-      </h3>
-      <RegisterButton text="Submit" @btn-click="submit" />
-    </div>
+          <path d="M16 22L6 12L16 2l1.775 1.775L9.55 12l8.225 8.225Z" />
+        </svg>
+      </router-link>
+    </h1>
+    <RegisterInput
+      title="Username"
+      placeholder="Username"
+      :error-message="v$.username.$errors[0]?.$message ?? ''"
+      v-model="registerVals.username"
+      @input="clearRegisterError"
+    />
+    <RegisterInput
+      title="Email"
+      placeholder="Email"
+      :error-message="v$.email.$errors[0]?.$message ?? ''"
+      v-model="registerVals.email"
+      @input="clearRegisterError"
+    />
+    <RegisterInput
+      title="Password"
+      placeholder="Password"
+      :error-message="v$.password.$errors[0]?.$message ?? ''"
+      v-model="registerVals.password"
+    />
+    <RegisterInput
+      title="Confirm password"
+      placeholder="Confirm password"
+      :error-message="v$.confirmPassword.$errors[0]?.$message ?? ''"
+      v-model="registerVals.confirmPassword"
+    />
+    <h3 class="text-gray-100 text-sm">
+      Have an existing account?
+      <router-link to="/Login" class="text-blue-500 underline"
+        >Log In</router-link
+      >
+    </h3>
+    <RegisterButton text="Submit" @btn-click="submit" />
   </div>
 </template>
